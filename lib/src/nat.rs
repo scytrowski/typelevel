@@ -1,15 +1,19 @@
+use crate::private::Sealed;
+
 pub mod ops;
 
-pub trait Nat {}
+pub trait Nat : Sealed {}
 
 #[derive(PartialEq)]
 #[cfg_attr(test, derive(Debug))]
 pub struct _0;
+impl Sealed for _0 {}
 impl Nat for _0 {}
 
 #[derive(PartialEq)]
 #[cfg_attr(test, derive(Debug))]
 pub struct Succ<N: Nat>(N);
+impl <N: Nat> Sealed for Succ<N> {}
 impl <N: Nat> Nat for Succ<N> {}
 
 pub type _1 = Succ<_0>;
