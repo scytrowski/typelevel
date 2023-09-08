@@ -1,6 +1,6 @@
-use lib::nat::{_0, _5};
-use lib::nat::ops::{NatAdd, ToNumber};
+use lib::hlist;
 
 fn main() {
-    println!("{}", _5.add(_0).to_number());
+    let l = hlist![1, "abc", false];
+    println!("{}", l);
 }

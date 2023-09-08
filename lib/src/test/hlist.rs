@@ -1,60 +1,61 @@
-use crate::hlist::{Cons, HList, Nil};
+use crate::hlist;
+use crate::hlist::{HList, Nil};
 use crate::hlist::ops::{HListAppend, HListHead, HListPushBack, HListTail, Size};
 use crate::nat::{_0, _3};
 
 #[test]
-fn get_head_of_single_cons() {
+fn create_nil() {
+    assert_eq!(hlist![], Nil);
+}
+
+#[test]
+fn create_single_cons() {
+    assert_eq!(hlist![79], Nil.push_front(79));
+}
+
+#[test]
+fn create_multiple_cons() {
     assert_eq!(
-        Nil.push_front(5).head(),
-        5
+        hlist![19, "test", false],
+        Nil.push_front(false).push_front("test").push_front(19)
     );
+}
+
+#[test]
+fn get_head_of_single_cons() {
+    assert_eq!(hlist![5].head(), 5);
 }
 
 #[test]
 fn get_head_of_multiple_cons() {
-    assert_eq!(
-        Nil.push_front("abc").push_front("def").push_front("ghi").head(),
-        "ghi"
-    );
+    assert_eq!(hlist!["ghi", "def", "abc"].head(), "ghi");
 }
 
 #[test]
 fn get_tail_of_single_cons() {
-    assert_eq!(
-        Nil.push_front(false).tail(),
-        Nil
-    );
+    assert_eq!(hlist![false].tail(), Nil);
 }
 
 #[test]
 fn get_tail_of_multiple_cons() {
-    assert_eq!(
-        Nil.push_front("abc").push_front("def").push_front("ghi").tail(),
-        Nil.push_front("abc").push_front("def")
-    );
+    assert_eq!(hlist!["ghi", "def", "abc"].tail(), hlist!["def", "abc"]);
 }
 
 #[test]
 fn push_back_to_nil() {
-    assert_eq!(
-        Nil.push_back(15),
-        Cons(15, Nil)
-    );
+    assert_eq!(Nil.push_back(15), hlist![15]);
 }
 
 #[test]
 fn push_back_to_single_cons() {
-    assert_eq!(
-        Nil.push_front(20).push_back(50),
-        Nil.push_front(50).push_front(20)
-    );
+    assert_eq!(hlist![20].push_back(50), hlist![20, 50]);
 }
 
 #[test]
 fn push_back_to_multiple_cons() {
     assert_eq!(
-        Nil.push_front("a").push_front("b").push_front("c").push_back("d"),
-        Nil.push_front("d").push_front("a").push_front("b").push_front("c")
+        hlist!["c", "b", "a"].push_back("d"),
+        hlist!["c", "b", "a", "d"]
     );
 }
 
@@ -65,69 +66,47 @@ fn append_nil_to_nil() {
 
 #[test]
 fn append_nil_to_single_cons() {
-    assert_eq!(
-        Nil.push_front(1337).append(Nil),
-        Nil.push_front(1337)
-    );
+    assert_eq!(hlist![1337].append(Nil), hlist![1337]);
 }
 
 #[test]
 fn append_nil_to_multiple_cons() {
-    assert_eq!(
-        Nil.push_front(1).push_front(2).push_front(3).append(Nil),
-        Nil.push_front(1).push_front(2).push_front(3)
-    );
+    assert_eq!(hlist![3, 2, 1].append(Nil), hlist![3, 2, 1]);
 }
 
 #[test]
 fn append_single_cons_to_nil() {
-    assert_eq!(
-        Nil.append(Nil.push_front("abc")),
-        Nil.push_front("abc")
-    );
+    assert_eq!(Nil.append(hlist!["abc"]), hlist!["abc"]);
 }
 
 #[test]
 fn append_multiple_cons_to_nil() {
-    assert_eq!(
-        Nil.append(Nil.push_front("abc").push_front("def").push_front("ghi")),
-        Nil.push_front("abc").push_front("def").push_front("ghi")
-    );
+    assert_eq!(Nil.append(hlist!["ghi", "def", "abc"]), hlist!["ghi", "def", "abc"]);
 }
 
 #[test]
 fn append_single_cons_to_single_cons() {
-    assert_eq!(
-        Nil.push_front(1).append(Nil.push_front(2)),
-        Nil.push_front(2).push_front(1)
-    );
+    assert_eq!(hlist![1].append(hlist![2]), hlist![1, 2]);
 }
 
 #[test]
 fn append_single_cons_to_multiple_cons() {
-    assert_eq!(
-        Nil.push_front(1).push_front(2).push_front(3).append(Nil.push_front(4)),
-        Nil.push_front(4).push_front(1).push_front(2).push_front(3)
-    );
+    assert_eq!(hlist![3, 2, 1].append(hlist![4]), hlist![3, 2, 1, 4]);
 }
 
 #[test]
 fn append_multiple_cons_to_single_cons() {
     assert_eq!(
-        Nil.push_front("a").append(Nil.push_front("b").push_front("c").push_front("d")),
-        Nil.push_front("b").push_front("c").push_front("d").push_front("a")
+        hlist!["a"].append(hlist!["d", "c", "b"]),
+        hlist!["a", "d", "c", "b"]
     );
 }
 #[test]
 fn append_multiple_cons_to_multiple_cons() {
     assert_eq!(
-        Nil.push_front("a").push_front("b").push_front("c").append(
-            Nil.push_front("d").push_front("e").push_front("f")
-        ),
-        Nil
-            .push_front("d").push_front("e").push_front("f")
-            .push_front("a").push_front("b").push_front("c")
-    )
+        hlist!["c", "b", "a"].append(hlist!["f", "e", "d"]),
+        hlist!["c", "b", "a", "f", "e", "d"]
+    );
 }
 
 #[test]
@@ -137,8 +116,5 @@ fn compute_size_of_nil() {
 
 #[test]
 fn compute_size_of_cons() {
-    assert_eq!(
-        Nil.push_front(1).push_front("a").push_front(0.15).size(),
-        _3
-    );
+    assert_eq!(hlist![0.15, "a", 1].size(), _3);
 }
