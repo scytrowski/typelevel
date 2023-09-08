@@ -1,5 +1,5 @@
 use crate::nat::{_0, _1, _2, _5, _6, _7, _8};
-use crate::nat::ops::{Add, ToNumber};
+use crate::nat::ops::{NatAdd, ToNumber};
 
 #[test]
 fn convert_0_to_number() {

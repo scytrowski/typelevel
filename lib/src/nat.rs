@@ -1,8 +1,13 @@
+use crate::nat::ops::*;
 use crate::private::Sealed;
 
 pub mod ops;
 
-pub trait Nat : Sealed {}
+pub trait Nat : Sealed {
+    fn inc(self) -> Inc<Self> where Self: Sized {
+        self.add(_1)
+    }
+}
 
 #[derive(PartialEq)]
 #[cfg_attr(test, derive(Debug))]
@@ -12,7 +17,7 @@ impl Nat for _0 {}
 
 #[derive(PartialEq)]
 #[cfg_attr(test, derive(Debug))]
-pub struct Succ<N: Nat>(N);
+pub struct Succ<N: Nat>(pub N);
 impl <N: Nat> Sealed for Succ<N> {}
 impl <N: Nat> Nat for Succ<N> {}
 

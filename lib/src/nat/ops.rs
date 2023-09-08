@@ -1,19 +1,22 @@
-use crate::nat::{_0, Nat, Succ};
+use crate::nat::{_0, _1, Nat, Succ};
 
-pub trait Add<B: Nat> where Self: Nat {
+pub type Add<A, B> = <A as NatAdd<B>>::Out;
+pub type Inc<A> = Add<A, _1>;
+
+pub trait NatAdd<B: Nat> where Self: Nat {
     type Out: Nat;
     fn add(self, b: B) -> Self::Out;
 }
 
-impl <A: Nat> Add<_0> for A {
+impl <A: Nat> NatAdd<_0> for A {
     type Out = A;
     fn add(self, _: _0) -> Self::Out {
         self
     }
 }
 
-impl <A: Nat, B: Nat> Add<Succ<B>> for A where A: Add<B> {
-    type Out = Succ<<A as Add<B>>::Out>;
+impl <A: Nat, B: Nat> NatAdd<Succ<B>> for A where A: NatAdd<B> {
+    type Out = Succ<<A as NatAdd<B>>::Out>;
     fn add(self, b: Succ<B>) -> Self::Out {
         Succ(self.add(b.0))
     }
